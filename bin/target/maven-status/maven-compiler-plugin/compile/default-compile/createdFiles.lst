@@ -1,0 +1,13 @@
+nett\formacion\aaa\module4\spring\movies\controller\movies\MovieRestController.class
+nett\formacion\aaa\module4\spring\movies\movies\repo\IMovieRepository.class
+nett\formacion\aaa\module4\spring\movies\movies\repo\WeatherNowRepository.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Movie.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Registros.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Ciudades.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Estadoscielo.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Temperaturas.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Tipotemperatura.class
+nett\formacion\aaa\module4\spring\movies\MoviesApplication.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Usuarios.class
+nett\formacion\aaa\module4\spring\movies\movies\repo\WeatherNowCitiesRepo.class
+nett\formacion\aaa\module4\spring\movies\movies\model\Paises.class

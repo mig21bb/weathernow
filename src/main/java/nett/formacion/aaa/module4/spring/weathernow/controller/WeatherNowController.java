@@ -6,7 +6,9 @@
 package nett.formacion.aaa.module4.spring.weathernow.controller;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
@@ -26,6 +28,7 @@ import nett.formacion.aaa.module4.spring.weathernow.model.Estadoscielo;
 import nett.formacion.aaa.module4.spring.weathernow.model.Pais;
 import nett.formacion.aaa.module4.spring.weathernow.model.Registro;
 import nett.formacion.aaa.module4.spring.weathernow.model.Usuario;
+import nett.formacion.aaa.module4.spring.weathernow.pojos.GetSky;
 import nett.formacion.aaa.module4.spring.weathernow.repo.WeatherNowCitiesRepo;
 import nett.formacion.aaa.module4.spring.weathernow.repo.WeatherNowEstadoscieloRepo;
 import nett.formacion.aaa.module4.spring.weathernow.repo.WeatherNowRepository;
@@ -47,7 +50,34 @@ public class WeatherNowController {
     @Autowired
     private WeatherNowUsuarioRepo wnUsuarioRepo;
     
+ // Objeto que convertirá nuestros objetos en cadenas de texto JSON para devolverlas
+	ObjectMapper mapper = new ObjectMapper();
+    
     private static final Logger LOGGER = LogManager.getLogger(WeatherNowController.class.getName());   
+    
+    /**
+     * Método para obtener las ciudades incluídas en la BBDD
+     */
+    @RequestMapping(path="/getCities", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
+    @ResponseBody                                                                // Anotación que indica que devolveremos un Objeto, en este caso, un objeto de tipo String.
+    public String getCities(){
+    	
+    	String response=null;
+    	
+    	List<Ciudad> ciudades = new ArrayList<>();
+    	
+    	try{
+    		
+    		ciudades = (List<Ciudad>) wnCityRepo.findAll();
+    		response = mapper.writeValueAsString(ciudades);
+    		
+    	} catch (Exception e) {
+        	LOGGER.error(e.getMessage());
+        	response = e.getMessage();
+        }
+    	
+    	return response;
+    }
     
  /**
   * Método para introducir un estado del cielo en la BBDD
@@ -56,7 +86,7 @@ public class WeatherNowController {
   * @param sky     Obligatorio
   * @param idUsuario   No obligatorio. Si no se envía se usará el usuario con id=1
   * @return
-  */
+  */   
     @RequestMapping(path="/addSky", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
     @ResponseBody                                                                // Anotación que indica que devolveremos un Objeto, en este caso, un objeto de tipo String.
     public String addSky(
@@ -74,12 +104,12 @@ public class WeatherNowController {
     	Ciudad city = new Ciudad();
     	// Instanciamos una estado del cielo ( vacío por ahora )
     	Estadoscielo estado = new Estadoscielo();
-    	// Instanciamos un usuario ( vacío por ahora )
+    	// Instanciamos un usuario ( vacío por ahora )    	
     	Usuario usuario = new Usuario();
     	// Instanciamos un registro ( vacío por ahora )
     	Registro registro = new Registro();
-    	// Objeto que convertirá nuestros objetos en cadenas de texto JSON para devolverlas
-    	ObjectMapper mapper = new ObjectMapper();
+    	// Pojo getSky
+    	GetSky getSky = new GetSky();    	
     	// Objeto auxiliar para la codificación MD5
     	// MessageDigest md5 = MessageDigest.getInstance("MD5");
     	
@@ -111,8 +141,12 @@ public class WeatherNowController {
 	        	registro.setUsuario(usuario);
 	        	// Guardamos el registro
 	        	wnRepo.save(registro);
-	        	// Devolvemos el registro generado.
-	            response = mapper.writeValueAsString(registro);
+	        	// Devolvemos el registro 	        	
+	            //response = mapper.writeValueAsString(registro);
+	        	
+	        	// Devolvemos un pojo de tipo GetSky
+	        	getSky.setEstadocielo(registro.getEstadoscielo().getEstado());
+	        	response = mapper.writeValueAsString(getSky);
 	        // Si no encuentra la ciudad no guarda.
         	}else{
         		response = "Esta ciudad no existe en nuestra base de datos.";
@@ -167,23 +201,13 @@ public class WeatherNowController {
            	city = wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
            	// Si encuentra la ciudad
            	if(city != null){
-   	        	System.out.println(city.getNombreCiu());
-   	        	// Cargamos El estdo del cielo cuyo id coinincida con el parámetro, consultando la BBDD a través del repositorio de estadoscielo
    	        	
-   	        	// Vamos cargando los objetos consultados a la base de datos en el objeto -- registro --
-   	        	registro.setCiudade(city);
-   	        	
-   	        	registro.setFechaReg(new Date());
-   	        	/*if(idUsuario == null){
-   	        		idUsuario = 1;
-   	        	}
-   	        	usuario = wnUsuarioRepo.findOne(idUsuario);*/
-   	        	registro.setUsuario(usuario);
-   	        	// Guardamos el registro
-   	        	wnRepo.save(registro);            
-   	        	// Devolvemos el registro generado.
-   	            response = mapper.writeValueAsString(registro);
-   	        // Si no encuentra la ciudad no guarda.
+           		
+           		
+           		
+           		
+           		
+           		
            	}else{
            		response = "Esta ciudad no existe en nuestra base de datos.";
            	}

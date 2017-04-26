@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+	</head>
+	<body>
+		<form id="addSkyForm" action="http://localhost:7777/addSky" method="GET">
+			<label for="ciudad">
+				Ciudad
+				<input type="text" name="ciudad"/>
+			</label>
+			<label for="ciudad">
+				sky(1 - 7)
+				<input type="text" name="sky"/>
+			</label>
+		</form>	
+		<button id="addSky" type="button">addSky</button>
+	</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$.ajax({
+			method: "POST",
+			url: "http://localhost:7777/getCities",
+			error: function(response){
+		   	console.log("error on ajax call: "+response.estadocielo);
+		   },
+		   success: function(response){
+		     console.log("success "+ response);
+		   }	
+	});
+		});
+	$('#addSky').click(function(){
+		var addSky = $('#addSkyForm').serialize();
+		$.ajax({
+			method: "POST",
+			url: "http://localhost:7777/addSky",
+			data: addSky,
+		   error: function(response){
+		   	alert("error on ajax call: "+response.estadocielo);
+		   },
+		   success: function(response){
+		     alert("success "+ response);
+		   }
+		 });		
+	});	
+	
+</script>

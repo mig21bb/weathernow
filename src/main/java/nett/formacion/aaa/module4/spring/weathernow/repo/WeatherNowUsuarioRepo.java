@@ -15,6 +15,7 @@ import nett.formacion.aaa.module4.spring.weathernow.model.Usuario;
   
 public interface WeatherNowUsuarioRepo extends CrudRepository<Usuario, Integer> { 
    
-    
+	public Usuario findByNombreUsuIgnoreCase(String name);
+	
 }
 

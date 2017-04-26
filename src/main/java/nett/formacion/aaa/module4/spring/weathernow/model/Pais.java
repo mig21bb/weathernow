@@ -17,19 +17,19 @@ public class Pais implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@Column(name="id_pais")
 	private int idPais;
 
-	@Column(nullable=false)
-	private int codigoPais;
+	@Column(name="codigo_pais")
+	private String codigoPais;
 
-	@Column(nullable=false, length=100)
+	@Column(name="nombre_pais")
 	private String nombrePais;
-
+/*
 	//bi-directional many-to-one association to Ciudad
-	//@OneToMany(mappedBy="pais",fetch=FetchType.LAZY)
-	//private List<Ciudad> ciudades;
-
+	@OneToMany(mappedBy="pais")
+	private List<Ciudad> ciudades;
+*/
 	public Pais() {
 	}
 
@@ -41,11 +41,11 @@ public class Pais implements Serializable {
 		this.idPais = idPais;
 	}
 
-	public int getCodigoPais() {
+	public String getCodigoPais() {
 		return this.codigoPais;
 	}
 
-	public void setCodigoPais(int codigoPais) {
+	public void setCodigoPais(String codigoPais) {
 		this.codigoPais = codigoPais;
 	}
 
@@ -56,10 +56,6 @@ public class Pais implements Serializable {
 	public void setNombrePais(String nombrePais) {
 		this.nombrePais = nombrePais;
 	}
-	@Override
-    public String toString() {
-        return String.format("Ciudad[ codigo='%s', pais='%d']",codigoPais, nombrePais);
-    }
 /*
 	public List<Ciudad> getCiudades() {
 		return this.ciudades;

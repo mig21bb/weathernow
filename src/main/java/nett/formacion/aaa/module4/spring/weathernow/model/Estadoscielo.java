@@ -10,26 +10,25 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="estadoscielo")
 @NamedQuery(name="Estadoscielo.findAll", query="SELECT e FROM Estadoscielo e")
 public class Estadoscielo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@Column(name="id_est")
 	private int idEst;
 
-	@Column(nullable=false, length=100)
-	private String est;
+	private String estado;
 
 	//bi-directional many-to-one association to Registro
-	//@OneToMany(mappedBy="estadoscielo",fetch=FetchType.LAZY)
-	//private List<Registro> registros;
+	/*
+	@OneToMany(mappedBy="estadoscielo")
+	private List<Registro> registros;
 
 	public Estadoscielo() {
 	}
-
+*/
 	public int getIdEst() {
 		return this.idEst;
 	}
@@ -38,12 +37,12 @@ public class Estadoscielo implements Serializable {
 		this.idEst = idEst;
 	}
 
-	public String getEst() {
-		return this.est;
+	public String getEstado() {
+		return this.estado;
 	}
 
-	public void setEst(String est) {
-		this.est = est;
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 /*
 	public List<Registro> getRegistros() {

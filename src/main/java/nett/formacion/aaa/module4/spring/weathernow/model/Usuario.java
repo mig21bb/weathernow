@@ -17,25 +17,25 @@ public class Usuario implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@Column(name="id_usu")
 	private int idUsu;
 
-	@Column(nullable=false, length=100)
+	@Column(name="clave_usu")
 	private String claveUsu;
 
-	@Column(length=100)
+	@Column(name="correo_usu")
 	private String correoUsu;
 
-	@Column(nullable=false, length=100)
+	@Column(name="nombre_usu")
 	private String nombreUsu;
 
-	@Column(nullable=false, length=100)
+	@Column(name="privilegio_usu")
 	private String privilegioUsu;
-
+/*
 	//bi-directional many-to-one association to Registro
-	//@OneToMany(mappedBy="usuario",fetch=FetchType.LAZY)
-	//private List<Registro> registros;
-
+	@OneToMany(mappedBy="usuario")
+	private List<Registro> registros;
+*/
 	public Usuario() {
 	}
 
@@ -78,10 +78,6 @@ public class Usuario implements Serializable {
 	public void setPrivilegioUsu(String privilegioUsu) {
 		this.privilegioUsu = privilegioUsu;
 	}
-	@Override
-    public String toString() {
-        return String.format("Ciudad[ usuario='%s']",nombreUsu);
-    }
 /*
 	public List<Registro> getRegistros() {
 		return this.registros;

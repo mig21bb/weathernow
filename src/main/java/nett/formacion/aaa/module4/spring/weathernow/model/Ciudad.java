@@ -17,24 +17,26 @@ public class Ciudad implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@Column(name="id_ciu")
 	private int idCiu;
 
-	@Column(length=100)
+	@Column(name="nombre_ciu")
 	private String nombreCiu;
 
 	//bi-directional many-to-one association to Pais
-	@ManyToOne
-	@JoinColumn(name="idPais", nullable=false)
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="id_pais")
 	private Pais pais;
 
 	//bi-directional many-to-one association to Registro
-	//@OneToMany(mappedBy="ciudade",fetch=FetchType.LAZY)
-	//private List<Registro> registros;
+	/*
+	@OneToMany(mappedBy="ciudade")
+	private List<Registro> registros;
 
 	public Ciudad() {
 	}
-
+*/
 	public int getIdCiu() {
 		return this.idCiu;
 	}
@@ -58,11 +60,6 @@ public class Ciudad implements Serializable {
 	public void setPais(Pais pais) {
 		this.pais = pais;
 	}
-	
-	@Override
-    public String toString() {
-        return String.format("Ciudad[ nombre='%s', pais='%d']",nombreCiu, pais);
-    }
 /*
 	public List<Registro> getRegistros() {
 		return this.registros;

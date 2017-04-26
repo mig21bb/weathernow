@@ -17,29 +17,28 @@ public class Registro implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@Column(name="id_reg")
 	private int idReg;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable=false)
+	@Column(name="fecha_reg")
 	private Date fechaReg;
 
-	@Column
-	private int temperatura;
+	private float temperatura;
 
 	//bi-directional many-to-one association to Ciudad
-	@ManyToOne
-	@JoinColumn(name="idCiu", nullable=false)
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="id_ciu")
 	private Ciudad ciudade;
 
 	//bi-directional many-to-one association to Estadoscielo
-	@ManyToOne
-	@JoinColumn(name="idEst")
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="id_est")
 	private Estadoscielo estadoscielo;
 
 	//bi-directional many-to-one association to Usuario
-	@ManyToOne
-	@JoinColumn(name="idUsu", nullable=false)
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="id_usu")
 	private Usuario usuario;
 
 	public Registro() {
@@ -61,11 +60,11 @@ public class Registro implements Serializable {
 		this.fechaReg = fechaReg;
 	}
 
-	public int getTemperatura() {
+	public float getTemperatura() {
 		return this.temperatura;
 	}
 
-	public void setTemperatura(int temperatura) {
+	public void setTemperatura(float temperatura) {
 		this.temperatura = temperatura;
 	}
 
@@ -92,10 +91,5 @@ public class Registro implements Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-	
-	
-    public String toStringSky() {
-        return String.format("Registro[ ciudad='%s', sky='%s']",ciudade.getNombreCiu(),estadoscielo.getEst());
-    }
 
 }

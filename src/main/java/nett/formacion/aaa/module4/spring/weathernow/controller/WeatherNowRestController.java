@@ -39,7 +39,7 @@ import nett.formacion.aaa.module4.spring.weathernow.repo.WeatherNowUsuarioRepo;
  * @author Miguel Ángel Buñuales, Verónica Torcal, Juan Nonay, Mª Carmen Chaves
  */
 @RestController
-public class WeatherNowController {
+public class WeatherNowRestController {
     
     @Autowired
     private WeatherNowRepository wnRepo;
@@ -53,7 +53,7 @@ public class WeatherNowController {
  // Objeto que convertirá nuestros objetos en cadenas de texto JSON para devolverlas
 	ObjectMapper mapper = new ObjectMapper();
     
-    private static final Logger LOGGER = LogManager.getLogger(WeatherNowController.class.getName());   
+    private static final Logger LOGGER = LogManager.getLogger(WeatherNowRestController.class.getName());   
     
     /**
      * Método para obtener las ciudades incluídas en la BBDD
@@ -142,11 +142,11 @@ public class WeatherNowController {
 	        	// Guardamos el registro
 	        	wnRepo.save(registro);
 	        	// Devolvemos el registro 	        	
-	            //response = mapper.writeValueAsString(registro);
+	            response = mapper.writeValueAsString(registro);
 	        	
 	        	// Devolvemos un pojo de tipo GetSky
-	        	getSky.setEstadocielo(registro.getEstadoscielo().getEstado());
-	        	response = mapper.writeValueAsString(getSky);
+	        	//getSky.setEstadocielo(registro.getEstadoscielo().getEstado());
+	        	//response = mapper.writeValueAsString(getSky);
 	        // Si no encuentra la ciudad no guarda.
         	}else{
         		response = "Esta ciudad no existe en nuestra base de datos.";

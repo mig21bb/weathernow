@@ -58,7 +58,7 @@ public class WeatherNowRestController {
     /**
      * Método para obtener las ciudades incluídas en la BBDD
      */
-    @RequestMapping(path="/getCities", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
+    @RequestMapping(path="/wn/getCities", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
     @ResponseBody                                                                // Anotación que indica que devolveremos un Objeto, en este caso, un objeto de tipo String.
     public String getCities(){
     	
@@ -87,7 +87,7 @@ public class WeatherNowRestController {
   * @param idUsuario   No obligatorio. Si no se envía se usará el usuario con id=1
   * @return
   */   
-    @RequestMapping(path="/addSky", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
+    @RequestMapping(path="/wn/addSky", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
     @ResponseBody                                                                // Anotación que indica que devolveremos un Objeto, en este caso, un objeto de tipo String.
     public String addSky(
     		@RequestParam(value = "ciudad", required = true) String ciudad,
@@ -142,11 +142,11 @@ public class WeatherNowRestController {
 	        	// Guardamos el registro
 	        	wnRepo.save(registro);
 	        	// Devolvemos el registro 	        	
-	            response = mapper.writeValueAsString(registro);
+	            //response = mapper.writeValueAsString(registro);
 	        	
 	        	// Devolvemos un pojo de tipo GetSky
-	        	//getSky.setEstadocielo(registro.getEstadoscielo().getEstado());
-	        	//response = mapper.writeValueAsString(getSky);
+	        	getSky.setEstadocielo(registro.getEstadoscielo().getEstado());
+	        	response = mapper.writeValueAsString(getSky);
 	        // Si no encuentra la ciudad no guarda.
         	}else{
         		response = "Esta ciudad no existe en nuestra base de datos.";
@@ -171,7 +171,7 @@ public class WeatherNowRestController {
      * @param idUsuario   Obligatorio.
      * @return
      */
-       @RequestMapping(path="/addTemperature", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
+       @RequestMapping(path="/wn/addTemperature", produces = {"text/plain", "application/*"} ) // Anotación para indicar la dirección que ejecutará el método, devuelve texto
        @ResponseBody                                                                // Anotación que indica que devolveremos un Objeto, en este caso, un objeto de tipo String.
        public String addSky(
        		@RequestParam(value = "ciudad", required = true) String ciudad,       		

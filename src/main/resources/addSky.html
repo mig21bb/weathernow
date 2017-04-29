@@ -24,10 +24,9 @@
 	$(document).ready(function(){
 		$.ajax({
 			method: "POST",
-			url: "http://localhost:7777/getCities",
-			dataType: 'jsonp',
-			error: function(response){
-		   	console.log("error on ajax call: "+response.estadocielo);
+			url: "http://localhost:7777/wn/getCities",			
+			error: function(xhr,error){
+		   	console.log("error on ajax call: "+xhr);
 		   },
 		   success: function(response){
 		     console.log("success "+ response);
@@ -38,11 +37,11 @@
 		var addSky = $('#addSkyForm').serialize();
 		$.ajax({
 			method: "POST",
-			url: "http://localhost:7777/addSky",
+			url: "http://localhost:7777/wn/addSky",
 			data: addSky,
 			dataType: 'jsonp',
-		   error: function(response){
-		   	alert("error on ajax call: "+response.estadocielo);
+		   error: function(xhr,error){
+		   	alert("error on ajax call: "+xhr);
 		   },
 		   success: function(response){
 		     alert("success "+ response);

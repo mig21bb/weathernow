@@ -17,6 +17,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,7 +54,7 @@ public class WeatherNowRestController {
 	@Autowired
 	private WeatherNowEstadoscieloRepo wnEstadosRepo;
 	@Autowired
-	private WeatherNowUsuarioRepo wnUsuarioRepo;
+	private WeatherNowUsuarioRepo wnUsuarioRepo;	
 
 	// Objeto que convertirá nuestros objetos en cadenas de texto JSON para
 	// devolverlas
@@ -63,9 +65,11 @@ public class WeatherNowRestController {
 	/**
 	 * Método para obtener las ciudades incluídas en la BBDD
 	 */
+	// Anotación para permitir llamar a la API REST desde orígenes distintos a localhost:7777 (o el puerto que sea)
+	@CrossOrigin
 	// Anotación para indicar la dirección que ejecutará el método, devuelve
 	// texto
-	@RequestMapping(path = "/wn/getCities", produces = { "text/plain", "application/*" })
+	@RequestMapping(path = "/wn/getCities", produces = { "text/plain", "application/json" })
 	// Anotación que indica que devolveremos un Objeto, en este caso, un objeto
 	// de tipo String.
 	@ResponseBody
@@ -99,9 +103,11 @@ public class WeatherNowRestController {
 	 * @param password No obligatorio. Si no se envía se usará el pass del usuario con id=1 ¿? - decidir esto entre todos
 	 * @return
 	 */
+	// Anotación para permitir llamar a la API REST desde orígenes distintos a localhost:7777 (o el puerto que sea)
+	@CrossOrigin
 	// Anotación para indicar la dirección que ejecutará el método, devuelve
 	// texto
-	@RequestMapping(path = "/addSky", produces = { "text/plain", "application/*" })
+	@RequestMapping(path = "/addSky", produces = { "text/plain", "application/json" })
 	// Anotación que indica que devolveremos un Objeto, en este caso, un objeto
 	// de tipo String.
 	@ResponseBody
@@ -194,10 +200,11 @@ public class WeatherNowRestController {
 	 * @param idUsuario Obligatorio.
 	 * @return
 	 */
+	// Anotación para permitir llamar a la API REST desde orígenes distintos a localhost:7777 (o el puerto que sea)
+	@CrossOrigin
 	// Anotación para indicar la dirección que ejecutará el método, devuelve
 	// texto
-
-	@RequestMapping(path = "/addTemperature", produces = { "text/plain", "application/*" })
+	@RequestMapping(path = "/addTemperature", produces = { "text/plain", "application/json" })
 	// Anotación que indica que devolveremos un Objeto, en este caso, un objeto
 	// de tipo String.
 	@ResponseBody
@@ -235,6 +242,10 @@ public class WeatherNowRestController {
 				city = wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
 				// Si encuentra la ciudad
 				if (city != null) {
+					
+					/*
+					 * Aquí hay que meter el código.
+					 */
 
 				} else {
 					response = "Esta ciudad no existe en nuestra base de datos.";
@@ -259,7 +270,9 @@ public class WeatherNowRestController {
 	 * @param escala Obligatorio
 	 * @return
 	 */	
-	@RequestMapping(path = "/getForecast", produces = { "text/plain", "application/*" })	
+	// Anotación para permitir llamar a la API REST desde orígenes distintos a localhost:7777 (o el puerto que sea)
+	@CrossOrigin
+	@RequestMapping(path = "/getForecast", produces = { "text/plain", "application/json" })	
 	@ResponseBody
 	public String getForecast(@RequestParam(value = "ciudad", required = true) String ciudad,
 						 	  @RequestParam(value = "escala", required = true) String escala) {

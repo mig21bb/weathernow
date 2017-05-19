@@ -1,12 +1,11 @@
 package nett.formacion.aaa.module4.spring.weathernow.pojos;
 
-import java.util.Date;
 
 public class Forecast {
 	
 	private GetSky sky;
 	private GetTemperature temperature;
-	private Date day;
+	private String day;
 	
 	public GetSky getSky() {
 		return sky;
@@ -20,10 +19,10 @@ public class Forecast {
 	public void setTemperature(GetTemperature temperature) {
 		this.temperature = temperature;
 	}
-	public Date getDay() {
+	public String getDay() {
 		return day;
 	}
-	public void setDay(Date day) {
+	public void setDay(String day) {
 		this.day = day;
 	}
 	

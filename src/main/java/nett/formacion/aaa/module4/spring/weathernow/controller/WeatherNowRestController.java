@@ -207,7 +207,7 @@ public class WeatherNowRestController {
 				registro.setEstadoscielo(estado);
 				//Objeto que formateará el String fecha a una fecha
 				System.out.println(fecha);
-				DateFormat formatoFecha = new SimpleDateFormat("yyyy-mm-dd");
+				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
 				System.out.println(formatoFecha.parse(fecha).toString());
 				registro.setFechaReg(formatoFecha.parse(fecha));
 				/* if(idUsuario == null){ */
@@ -360,6 +360,9 @@ public class WeatherNowRestController {
 						System.out.println(city);
 						registro = wnRepo.findByFechaRegAndCiudade(hoy.getTime(), city);
 						System.out.println(registro);
+						if(registro!=null){
+							
+						
 						cielo.setEstadocielo(registro.getEstadoscielo().getEstado());
 						temp.setEscala(Escala.valueOf(escala));
 						if(escala.toUpperCase().equals("F")){
@@ -369,16 +372,18 @@ public class WeatherNowRestController {
 						}else{
 							temp.setTemperatura((long) registro.getTemperatura());
 						}
-						
-						f.setDay(hoy.getTime());
+						SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+						f.setDay(formatoFecha.format(hoy.getTime()));
 						f.setSky(cielo);
 						f.setTemperature(temp);
 						
 						forecastArray.add(f);
-						
+						}else{
+							forecastArray.add(f);
+						}
 					}
 					
-					
+					response=mapper.writeValueAsString(forecastArray);
 					
 
 				} else {

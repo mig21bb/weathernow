@@ -22,4 +22,5 @@ public class WeatherNowApplication {
 		SpringApplication.run(WeatherNowApplication.class, args);
 	}
 	
+
 }

@@ -44,6 +44,7 @@ import nett.formacion.aaa.module4.spring.weathernow.repo.WeatherNowUsuarioRepo;
  *
  * @author Miguel Ángel Buñuales, Verónica Torcal, Juan Nonay, Mª Carmen Chaves
  */
+
 @RestController
 public class WeatherNowRestController {
 

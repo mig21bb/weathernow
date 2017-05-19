@@ -21,6 +21,10 @@
 					
 				</select>
 			</label>
+			<label for="fecha">
+				Fecha				
+				<input type="date" name="fecha">
+			</label>
 		</form>	
 		<button id="addSky" type="button">addSky</button>
 	</body>
@@ -29,15 +33,16 @@
 <script>
 	$(document).ready(function(){
 		$.ajax({
-			method: "POST",
-			url: "http://localhost:7777/wn/getCities",
+			method: "GET",
+			url: "http://localhost:7777/ciudads",
 			dataType: 'text',		
 			error: function(xhr,error){
 		   	console.log("error on ajax call: "+xhr);
 		   },
 		   success: function(response){
 		     console.log("success "+ response);
-		     var cities = JSON.parse(response);
+		     var responseObject = JSON.parse(response);
+		     var cities = responseObject._embedded.ciudads;
 		     console.log(cities);
 		     for(i=0;i<cities.length;i++){
 		     	$('#ciudades').append('<option value="'+cities[i].nombreCiu+'">'+cities[i].nombreCiu+'</option>');

@@ -20,7 +20,7 @@ public class Registro implements Serializable {
 	@Column(name="id_reg")
 	private int idReg;
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name="fecha_reg")
 	private Date fechaReg;
 

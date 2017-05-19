@@ -6,6 +6,8 @@
 package nett.formacion.aaa.module4.spring.weathernow.controller;
 
 import java.security.MessageDigest;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,40 +64,79 @@ public class WeatherNowRestController {
 	ObjectMapper mapper = new ObjectMapper();
 
 	private static final Logger LOGGER = LogManager.getLogger(WeatherNowRestController.class.getName());
-
+	
+	
 	/**
-	 * Método para obtener las ciudades incluídas en la BBDD
+	 * Método getSky para consultar la temperatura de hoy de una ciudad en una escala determinada
+	 * 
+	 * Para realizar por MAMEN
 	 */
-	// Anotación para permitir llamar a la API REST desde orígenes distintos a localhost:7777 (o el puerto que sea)
 	@CrossOrigin
-	// Anotación para indicar la dirección que ejecutará el método, devuelve
-	// texto
-	@RequestMapping(path = "/wn/getCities", produces = { "text/plain", "application/json" })
-	// Anotación que indica que devolveremos un Objeto, en este caso, un objeto
-	// de tipo String.
+	@RequestMapping(path = "/getSky", produces = { "text/plain", "application/json" })
 	@ResponseBody
-	public String getCities() {
-
+	public String getSky(
+			@RequestParam(value = "fecha", required = false) String fecha,
+			@RequestParam(value = "ciudad", required = true) String ciudad
+			) {
+		
+		GetSky getSky = new GetSky();
 		String response = null;
-
-		List<Ciudad> ciudades = new ArrayList<>();
-
-		try {
-
-			ciudades = (List<Ciudad>) wnCityRepo.findAll();
-			response = mapper.writeValueAsString(ciudades);
-
-		} catch (Exception e) {
+		
+		try{
+			//Hay que emlear los repositories para rellenar las propiedades del objeto getTemperature
+			
+			//Código aquí
+			
+			
+			response = mapper.writeValueAsString(getSky);
+			
+		}catch(Exception e){
 			LOGGER.error(e.getMessage());
 			response = e.getMessage();
 		}
-
+		
 		return response;
 	}
+	
+	/**
+	 * Método getTemperature para consultar la temperatura de hoy de una ciudad en una escala determinada
+	 * 
+	 * Para realizar por VERO
+	 */
+	@CrossOrigin
+	@RequestMapping(path = "/getTemperature", produces = { "text/plain", "application/json" })
+	@ResponseBody
+	public String getTemperature(
+			@RequestParam(value = "fecha", required = false) String fecha,
+			@RequestParam(value = "ciudad", required = true) String ciudad
+			) {
+		
+		GetTemperature getTemperature = new GetTemperature();
+		String response = null;
+		
+		try{
+			//Hay que emlear los repositories para rellenar las propiedades del objeto getTemperature
+			
+			//Código aquí
+			
+			
+			response = mapper.writeValueAsString(getTemperature);
+			
+		}catch(Exception e){
+			LOGGER.error(e.getMessage());
+			response = e.getMessage();
+		}
+		
+		
+		return response;
+		
+	}
+
+	
 
 	/**
-	 * Método para introducir un estado del cielo en la BBDD Autor:Miguel Ángel
-	 * Buñuales
+	 * Método para introducir un estado del cielo en la BBDD 
+	 * Autor:Miguel ÁngeL Buñuales
 	 * 
 	 * @param fecha   no obligatorio, si no se introduce se supone que es la fecha actual.
 	 * @param ciudad Obligatorio
@@ -164,7 +205,11 @@ public class WeatherNowRestController {
 				// el objeto -- registro --
 				registro.setCiudade(city);
 				registro.setEstadoscielo(estado);
-				registro.setFechaReg(new Date());
+				//Objeto que formateará el String fecha a una fecha
+				System.out.println(fecha);
+				DateFormat formatoFecha = new SimpleDateFormat("yyyy-mm-dd");
+				System.out.println(formatoFecha.parse(fecha).toString());
+				registro.setFechaReg(formatoFecha.parse(fecha));
 				/* if(idUsuario == null){ */
 				Integer idUsuario = 1;
 				// }
@@ -193,7 +238,7 @@ public class WeatherNowRestController {
 
 	/**
 	 * Método para introducir una temperatura relativa a una ciudad en la BBDD
-	 * Autor:Miguel Ángel Buñuales
+	 * Autor:Juan 
 	 * 
 	 * @param fecha   no obligatorio, si no se introduce se supone que es la fecha actual.
 	 * @param ciudad Obligatorio
@@ -209,7 +254,7 @@ public class WeatherNowRestController {
 	// Anotación que indica que devolveremos un Objeto, en este caso, un objeto
 	// de tipo String.
 	@ResponseBody
-	public String addSky(
+	public String addTemperature(
 			@RequestParam(value = "fecha", required = false) String fecha,
 			@RequestParam(value = "ciudad", required = true) String ciudad,
 			// @RequestParam(value = "usuario", required = true) Integer usuario,			
@@ -264,7 +309,7 @@ public class WeatherNowRestController {
 	}
 
 	/**
-	 * Método para introducir una temperatura relativa a una ciudad en la BBDD
+	 * Método para obtener un pronóstico de los próximos (fDays) días
 	 * Autor:Miguel Ángel Buñuales
 	 * 
 	 * @param ciudad Obligatorio
@@ -342,6 +387,7 @@ public class WeatherNowRestController {
 
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage());
+				e.printStackTrace();
 				response = e.getMessage();
 			}
 		} else {
@@ -350,11 +396,22 @@ public class WeatherNowRestController {
 
 		return response;
 	}
-	
+	/**
+	 * Método para convertir una temperatura expresada en grados celsius 
+	 * en una temperatura expresada en grados fahrenheit
+	 * @param celsius
+	 * @return
+	 */
 	public static double celsiusToFahrenheit(double celsius){
 		return (9.0/5)*celsius+32;
 	}
-
+	
+	/**
+	 * Método para convertir una temperatura expresada en grados  fahrenheit
+	 * en una temperatura expresada en grados celsius
+	 * @param fahrenheit
+	 * @return
+	 */
 	public static double fahrenheitToCelsius(double fahrenheit){
 		return fahrenheit - 32 * (5 / 9.0);
 	}

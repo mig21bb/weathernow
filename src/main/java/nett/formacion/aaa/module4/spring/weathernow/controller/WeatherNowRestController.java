@@ -111,25 +111,69 @@ public class WeatherNowRestController {
 			@RequestParam(value = "ciudad", required = true) String ciudad
 			) {
 		
-		GetTemperature getTemperature = new GetTemperature();
-		String response = null;
-		
-		try{
-			//Hay que emlear los repositories para rellenar las propiedades del objeto getTemperature
-			
-			//Código aquí
-			
-			
-			response = mapper.writeValueAsString(getTemperature);
-			
-		}catch(Exception e){
-			LOGGER.error(e.getMessage());
-			response = e.getMessage();
-		}
-		
-		
-		return response;
-		
+		//Nos aseguramos que la escala solicitada está destro de nuestro ENUM
+				if(Escala.contains(escala)){
+				
+					//Instancio la ciudad
+					Ciudad city=new Ciudad();
+					
+					//Instancio un nuevo registro
+					Registro registro=new Registro();
+						
+					//Instancio el calendario
+					Calendar hoy=Calendar.getInstance();
+					
+					//Objeto para convertir nuestro objeto en cadena de texto JSON para devolverlos
+					ObjectMapper mapper=new ObjectMapper();
+					
+					try{		
+					
+						//recojo el valor de la ciudad a consultar en el repositorio de Ciudades
+						city=wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
+						
+						//Si encuentra la ciudad
+						if(city!=null){
+							GetTemperature temp=new GetTemperature();
+							System.out.println(hoy.getTime());
+							System.out.println(city);
+							registro=wnRepo.findByFechaRegAndCiudade(hoy.getTime(),city);
+							System.out.println(registro);
+							
+							if(registro!=null){
+								//recojo el estado del cielo que tengo que mostrar para esta ciudad
+								cielo.setEstadoCielo(registro.getEstadoscielo().getEstado());
+								temp.setEscala(Escala.valueOf(escala));
+								
+								//indico el valor de la temperatura dependiendo de la escala
+								if(escala.toUpperCase().equals("F")){
+									temp.setTemperatura((long)celsiusToFahrenheit(registro.getTemperatura()));
+								}else if(escala.toUpperCase().equals("K")){
+									temp.setTemperatura((long) registro.getTemperatura()+273);
+								}else{
+									temp.setTemperatura((long) registro.getTemperatura());
+								}
+														
+								 //establezco el formato de la fecha
+								SimpleDateFormat formatoFecha= new SimpleDateFormat("yyyy-MM-dd");
+								temp.setDay(formatoFecha.format(hoy.getTime()));
+								
+								//establezco la ciudad a mostrar
+								temp.setCity(ciudad);
+								
+							}
+							// devuelvo el valor a mostrar
+							response = mapper.writeValueAsString(getTemperature);
+						}else{
+							//Si no encuentra la ciudad, muestro un mensaje
+							response="Esta ciudad no existe en nuestra base de datos."
+						}			
+					}catch(Exception e){
+						LOGGER.error(e.getMessage());
+						response = e.getMessage();
+					}
+				
+				}	
+				return response;
 	}
 
 	

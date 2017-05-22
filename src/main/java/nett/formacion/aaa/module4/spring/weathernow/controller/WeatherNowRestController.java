@@ -242,20 +242,32 @@ public class WeatherNowRestController {
 				// estadoscielo
 				estado = wnEstadosRepo.findOne(sky);
 				System.out.println(estado.getEstado());
-				// Vamos cargando los objetos consultados a la base de datos en
-				// el objeto -- registro --
-				registro.setCiudade(city);
-				registro.setEstadoscielo(estado);
-				//Objeto que formateará el String fecha a una fecha
-				System.out.println(fecha);
-				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-				System.out.println(formatoFecha.parse(fecha).toString());
-				registro.setFechaReg(formatoFecha.parse(fecha));
-				/* if(idUsuario == null){ */
-				Integer idUsuario = 1;
-				// }
-				usuario = wnUsuarioRepo.findOne(idUsuario);
-				registro.setUsuario(usuario);
+				
+				//Buscamos un registro para la fecha y ciudad pasadas como parámetro
+				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");				
+				registro = wnRepo.findByFechaRegAndCiudade(formatoFecha.parse(fecha), city);
+				if(registro!= null){
+					//Si ya existe dicho registro, lo actualizamos
+					registro.setEstadoscielo(estado);
+				}else{			
+				
+					// si no existe, lo rellenamos y guardamos
+					// Vamos cargando los objetos consultados a la base de datos en
+					// el objeto -- registro --
+					registro = new Registro();
+					registro.setCiudade(city);
+					registro.setEstadoscielo(estado);
+					//Objeto que formateará el String fecha a una fecha
+					System.out.println(fecha);
+					
+					System.out.println(formatoFecha.parse(fecha).toString());
+					registro.setFechaReg(formatoFecha.parse(fecha));
+					/* if(idUsuario == null){ */
+					Integer idUsuario = 1;
+					// }
+					usuario = wnUsuarioRepo.findOne(idUsuario);
+					registro.setUsuario(usuario);
+				}
 				// Guardamos el registro
 				wnRepo.save(registro);
 				// Devolvemos el registro
@@ -394,34 +406,36 @@ public class WeatherNowRestController {
 				city = wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
 				// Si encuentra la ciudad
 				if (city != null) {
-					Forecast f = new Forecast();
+					
 					for(int i=0;i<fDays;i++){
-						hoy.add(Calendar.DATE, i);		
-						System.out.println(hoy.getTime());
-						System.out.println(city);
+						Forecast f = new Forecast();	
+						registro = new Registro();
+						System.out.println("fecha de forecast" + hoy.getTime());
+						System.out.println(city.getNombreCiu());
 						registro = wnRepo.findByFechaRegAndCiudade(hoy.getTime(), city);
-						System.out.println(registro);
-						if(registro!=null){
+						System.out.println(registro.getEstadoscielo().getEstado());
+						if(registro!=null){						
+							cielo = new GetSky();
+							temp = new GetTemperature();
+							cielo.setEstadocielo(registro.getEstadoscielo().getEstado());
+							temp.setEscala(Escala.valueOf(escala));
+							if(escala.toUpperCase().equals("F")){
+								temp.setTemperatura((long) celsiusToFahrenheit(registro.getTemperatura()));
+							}else if(escala.toUpperCase().equals("K")){
+								temp.setTemperatura((long) registro.getTemperatura()+273);
+							}else{
+								temp.setTemperatura((long) registro.getTemperatura());
+							}
+							SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+							f.setDay(formatoFecha.format(hoy.getTime()));
+							f.setSky(cielo);
+							f.setTemperature(temp);
 							
-						
-						cielo.setEstadocielo(registro.getEstadoscielo().getEstado());
-						temp.setEscala(Escala.valueOf(escala));
-						if(escala.toUpperCase().equals("F")){
-							temp.setTemperatura((long) celsiusToFahrenheit(registro.getTemperatura()));
-						}else if(escala.toUpperCase().equals("K")){
-							temp.setTemperatura((long) registro.getTemperatura()+273);
-						}else{
-							temp.setTemperatura((long) registro.getTemperatura());
-						}
-						SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-						f.setDay(formatoFecha.format(hoy.getTime()));
-						f.setSky(cielo);
-						f.setTemperature(temp);
-						
-						forecastArray.add(f);
+							forecastArray.add(f);
 						}else{
 							forecastArray.add(f);
 						}
+						hoy.add(Calendar.DATE, 1);
 					}
 					
 					response=mapper.writeValueAsString(forecastArray);

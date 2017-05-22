@@ -107,7 +107,7 @@ public class WeatherNowRestController {
 	@RequestMapping(path = "/getTemperature", produces = { "text/plain", "application/json" })
 	@ResponseBody
 	public String getTemperature(
-			@RequestParam(value = "fecha", required = false) String fecha,
+			//@RequestParam(value = "fecha", required = false) String fecha,
 			@RequestParam(value = "ciudad", required = true) String ciudad,
 			@RequestParam(value = "escala", required = true) String escala
 			) {
@@ -143,7 +143,7 @@ public class WeatherNowRestController {
 							System.out.println(registro);
 							
 							if(registro!=null){
-								temp.setEscala(Escala.valueOf(escala));
+								temp.setEscala(Escala.valueOf(escala.toUpperCase()));
 								
 								//indico el valor de la temperatura dependiendo de la escala
 								if(escala.toUpperCase().equals("F")){

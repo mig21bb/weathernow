@@ -413,7 +413,7 @@ public class WeatherNowRestController {
 						System.out.println("fecha de forecast" + hoy.getTime());
 						System.out.println(city.getNombreCiu());
 						registro = wnRepo.findByFechaRegAndCiudade(hoy.getTime(), city);
-						System.out.println(registro.getEstadoscielo().getEstado());
+						//System.out.println(registro.getEstadoscielo().getEstado());
 						if(registro!=null){						
 							cielo = new GetSky();
 							temp = new GetTemperature();

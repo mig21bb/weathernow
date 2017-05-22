@@ -383,7 +383,7 @@ public class WeatherNowRestController {
 		// Dias de pronóstico
 		int fDays = 7;
 		// Nos aseguramos que la escala solicitada está dentro de nuestro ENUM
-		if (Escala.contains(escala.toUpperCase())) {
+		if (Escala.contains(escala)) {
 			// Instanciamos una ciudad ( vacía por ahora )
 			Ciudad city = new Ciudad();
 			// Instanciamos un registro ( vacío por ahora )
@@ -418,7 +418,7 @@ public class WeatherNowRestController {
 							cielo = new GetSky();
 							temp = new GetTemperature();
 							cielo.setEstadocielo(registro.getEstadoscielo().getEstado());
-							temp.setEscala(Escala.valueOf(escala));
+							temp.setEscala(Escala.valueOf(escala.toUpperCase()));
 							if(escala.toUpperCase().equals("F")){
 								temp.setTemperatura((long) celsiusToFahrenheit(registro.getTemperatura()));
 							}else if(escala.toUpperCase().equals("K")){

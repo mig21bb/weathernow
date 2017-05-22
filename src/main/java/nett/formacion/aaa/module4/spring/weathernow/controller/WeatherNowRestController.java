@@ -74,10 +74,10 @@ public class WeatherNowRestController {
 	@CrossOrigin
 	@RequestMapping(path = "/getSky", produces = { "text/plain", "application/json" })
 	@ResponseBody
-	public String getSky(
-			@RequestParam(value = "fecha", required = false) String fecha,
+	public String getSky(			
 			@RequestParam(value = "ciudad", required = true) String ciudad
-			) {
+			) {	
+		
 		
 		GetSky getSky = new GetSky();
 		String response = null;
@@ -108,9 +108,10 @@ public class WeatherNowRestController {
 	@ResponseBody
 	public String getTemperature(
 			@RequestParam(value = "fecha", required = false) String fecha,
-			@RequestParam(value = "ciudad", required = true) String ciudad
+			@RequestParam(value = "ciudad", required = true) String ciudad,
+			@RequestParam(value = "escala", required = true) String escala
 			) {
-		
+			     String response = null;
 		//Nos aseguramos que la escala solicitada está destro de nuestro ENUM
 				if(Escala.contains(escala)){
 				
@@ -123,8 +124,11 @@ public class WeatherNowRestController {
 					//Instancio el calendario
 					Calendar hoy=Calendar.getInstance();
 					
+					GetTemperature temp = new GetTemperature();
+					
 					//Objeto para convertir nuestro objeto en cadena de texto JSON para devolverlos
-					ObjectMapper mapper=new ObjectMapper();
+					ObjectMapper mapper=new ObjectMapper();					
+					
 					
 					try{		
 					
@@ -133,15 +137,12 @@ public class WeatherNowRestController {
 						
 						//Si encuentra la ciudad
 						if(city!=null){
-							GetTemperature temp=new GetTemperature();
 							System.out.println(hoy.getTime());
 							System.out.println(city);
 							registro=wnRepo.findByFechaRegAndCiudade(hoy.getTime(),city);
 							System.out.println(registro);
 							
 							if(registro!=null){
-								//recojo el estado del cielo que tengo que mostrar para esta ciudad
-								cielo.setEstadoCielo(registro.getEstadoscielo().getEstado());
 								temp.setEscala(Escala.valueOf(escala));
 								
 								//indico el valor de la temperatura dependiendo de la escala
@@ -152,27 +153,23 @@ public class WeatherNowRestController {
 								}else{
 									temp.setTemperatura((long) registro.getTemperatura());
 								}
-														
-								 //establezco el formato de la fecha
-								SimpleDateFormat formatoFecha= new SimpleDateFormat("yyyy-MM-dd");
-								temp.setDay(formatoFecha.format(hoy.getTime()));
 								
-								//establezco la ciudad a mostrar
-								temp.setCity(ciudad);
 								
 							}
 							// devuelvo el valor a mostrar
-							response = mapper.writeValueAsString(getTemperature);
+							response = mapper.writeValueAsString(temp);
 						}else{
 							//Si no encuentra la ciudad, muestro un mensaje
-							response="Esta ciudad no existe en nuestra base de datos."
+							response="Esta ciudad no existe en nuestra base de datos.";
 						}			
 					}catch(Exception e){
 						LOGGER.error(e.getMessage());
 						response = e.getMessage();
 					}
 				
-				}	
+				}else{
+					return "Escala no válida";
+				}
 				return response;
 	}
 

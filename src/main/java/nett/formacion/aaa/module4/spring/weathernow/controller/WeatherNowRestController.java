@@ -383,7 +383,7 @@ public class WeatherNowRestController {
 		// Dias de pronóstico
 		int fDays = 7;
 		// Nos aseguramos que la escala solicitada está dentro de nuestro ENUM
-		if (Escala.contains(escala)) {
+		if (Escala.contains(escala.toUpperCase())) {
 			// Instanciamos una ciudad ( vacía por ahora )
 			Ciudad city = new Ciudad();
 			// Instanciamos un registro ( vacío por ahora )

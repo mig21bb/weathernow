@@ -147,11 +147,11 @@ public class WeatherNowRestController {
 								
 								//indico el valor de la temperatura dependiendo de la escala
 								if(escala.toUpperCase().equals("F")){
-									temp.setTemperatura((long)celsiusToFahrenheit(registro.getTemperatura()));
+									temp.setTemperatura(celsiusToFahrenheit(registro.getTemperatura()));
 								}else if(escala.toUpperCase().equals("K")){
-									temp.setTemperatura((long) registro.getTemperatura()+273);
+									temp.setTemperatura(registro.getTemperatura()+273);
 								}else{
-									temp.setTemperatura((long) registro.getTemperatura());
+									temp.setTemperatura(registro.getTemperatura());
 								}
 								
 								
@@ -312,7 +312,7 @@ public class WeatherNowRestController {
 			@RequestParam(value = "ciudad", required = true) String ciudad,
 			// @RequestParam(value = "usuario", required = true) Integer usuario,			
 			// @RequestParam(value = "password", required = true) String password,			
-			@RequestParam(value = "temperatura", required = true) Float temperatura,
+			@RequestParam(value = "temperatura", required = true) float temperatura,
 			@RequestParam(value = "escala", required = true) String escala) {
 
 		System.out.println("Dentro del método addTemperature de WheatherNowController");
@@ -327,10 +327,14 @@ public class WeatherNowRestController {
 			Usuario usuario = new Usuario();
 			// Instanciamos un registro ( vacío por ahora )
 			Registro registro = new Registro();
+			// Instaciamos un estadosCielo ( vacío por ahora, pero incluirá un valor por defecto )  Finalmente no
+			// Estadoscielo estado = new Estadoscielo();
 			// Objeto que convertirá nuestros objetos en cadenas de texto JSON
 			// para
 			// devolverlas
 			ObjectMapper mapper = new ObjectMapper();
+			// Instaciamos un GetTemperature
+			GetTemperature getTemperature = new GetTemperature();
 
 			// Bloque try-catch en el que realizaremos todas las tareas de
 			// consulta
@@ -341,14 +345,49 @@ public class WeatherNowRestController {
 				city = wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
 				// Si encuentra la ciudad
 				if (city != null) {
-					
-					/*
-					 * Aquí hay que meter el código.
-					 */
+					System.out.println(city.getNombreCiu());
+					// Cargamos la temperatura cuyo id coinincida con el
+					// parámetro, consultando la BBDD a través del repositorio de
+					// Registros
+					SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");				
+					registro = wnRepo.findByFechaRegAndCiudade(formatoFecha.parse(fecha), city);
 
+					//Buscamos un registro para la fecha y ciudad pasadas como parámetro
+					if(registro!= null){
+						//Si ya existe dicho registro, lo actualizamos
+						registro.setTemperatura(temperatura);
+					}else{			
+					
+						// si no existe, lo rellenamos y guardamos
+						// Vamos cargando los objetos consultados a la base de datos en
+						// el objeto -- registro --
+						registro = new Registro();
+						registro.setCiudade(city);
+						registro.setTemperatura(temperatura);
+						//Objeto que formateará el String fecha a una fecha
+						System.out.println(fecha);
+						
+						System.out.println(formatoFecha.parse(fecha).toString());
+						registro.setFechaReg(formatoFecha.parse(fecha));
+						/* if(idUsuario == null){ */
+						Integer idUsuario = 1;
+						// }
+						usuario = wnUsuarioRepo.findOne(idUsuario);
+						registro.setUsuario(usuario);
+					}
+					// Guardamos el registro
+					wnRepo.save(registro);
+					// Devolvemos el registro
+					// response = mapper.writeValueAsString(registro);
+
+					// Devolvemos un pojo de tipo GetTemperature
+					getTemperature.setTemperatura(registro.getTemperatura());
+					response = mapper.writeValueAsString(getTemperature);
+					// Si no encuentra la ciudad no guarda.
 				} else {
 					response = "Esta ciudad no existe en nuestra base de datos.";
 				}
+
 
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage());
@@ -420,11 +459,11 @@ public class WeatherNowRestController {
 							cielo.setEstadocielo(registro.getEstadoscielo().getEstado());
 							temp.setEscala(Escala.valueOf(escala.toUpperCase()));
 							if(escala.toUpperCase().equals("F")){
-								temp.setTemperatura((long) celsiusToFahrenheit(registro.getTemperatura()));
+								temp.setTemperatura(celsiusToFahrenheit(registro.getTemperatura()));
 							}else if(escala.toUpperCase().equals("K")){
-								temp.setTemperatura((long) registro.getTemperatura()+273);
+								temp.setTemperatura(registro.getTemperatura()+273);
 							}else{
-								temp.setTemperatura((long) registro.getTemperatura());
+								temp.setTemperatura(registro.getTemperatura());
 							}
 							SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
 							f.setDay(formatoFecha.format(hoy.getTime()));
@@ -462,8 +501,8 @@ public class WeatherNowRestController {
 	 * @param celsius
 	 * @return
 	 */
-	public static double celsiusToFahrenheit(double celsius){
-		return (9.0/5)*celsius+32;
+	public static float celsiusToFahrenheit(float celsius){
+		return (float) ((9.0/5)*celsius+32);
 	}
 	
 	/**
@@ -472,8 +511,8 @@ public class WeatherNowRestController {
 	 * @param fahrenheit
 	 * @return
 	 */
-	public static double fahrenheitToCelsius(double fahrenheit){
-		return fahrenheit - 32 * (5 / 9.0);
+	public static float fahrenheitToCelsius(float fahrenheit){
+		return (float) (fahrenheit - 32 * (5 / 9.0));
 	}
 
 

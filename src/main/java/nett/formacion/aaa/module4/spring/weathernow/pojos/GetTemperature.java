@@ -2,13 +2,13 @@ package nett.formacion.aaa.module4.spring.weathernow.pojos;
 
 public class GetTemperature {
 	
-	private Long temperatura;
+	private Float temperatura;
 	private Escala escala;
 	
-	public Long getTemperatura() {
+	public Float getTemperatura() {
 		return temperatura;
 	}
-	public void setTemperatura(Long temperatura) {
+	public void setTemperatura(Float temperatura) {
 		this.temperatura = temperatura;
 	}
 	public Escala getEscala() {

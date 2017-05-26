@@ -1,0 +1,98 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>getForecast</title>
+	</head>
+	<body>
+		<form id="getForecastForm" action="http://localhost:7777/getForecast" method="GET">
+			<label for="ciudad">
+				Ciudad
+				<select id="ciudades2" name="ciudad">
+					
+				</select>
+			</label>
+			<label for="sky">				
+				Escala
+				<select id="escala" name="escala">
+					<option value="K">Kelvin</option>
+					<option value="C">Celsius</option>
+					<option value="F">Fahrenheit</option>
+				</select>
+			</label>
+			
+		</form>	
+		<button id="getForecast" type="button">GetForecast</button>
+
+		<div id="forecast">
+			
+		</div>
+
+	</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$.ajax({
+			method: "GET",
+			url: "http://localhost:7777/ciudads",
+			dataType: 'text',		
+			error: function(xhr,error){
+		   	console.log("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     console.log("success "+ response);
+		     var responseObject = JSON.parse(response);
+		     var cities = responseObject._embedded.ciudads;
+		     console.log(cities);
+		     for(i=0;i<cities.length;i++){
+		     	$('#ciudades').append('<option value="'+cities[i].nombreCiu+'">'+cities[i].nombreCiu+'</option>');
+		     	$('#ciudades2').append('<option value="'+cities[i].nombreCiu+'">'+cities[i].nombreCiu+'</option>');
+		     }
+		   }	
+	});
+		
+		$.ajax({
+			method: "GET",
+			url: "http://localhost:7777/estadoscieloes",
+			dataType: 'text',		
+			error: function(xhr,error){
+		   	console.log("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     console.log("success "+ response);
+		     var responseObject = JSON.parse(response);
+		     var estados = responseObject._embedded.estadoscieloes;
+		     console.log(estados);
+		     for(i=0;i<estados.length;i++){
+		     	$('#estados').append('<option value="'+(i+1)+'">'+estados[i].estado+'</option>');
+		     }
+		   }	
+	});
+	});	
+	$('#getForecast').click(function(){
+		var getForecast = $('#getForecastForm').serialize();
+		$.ajax({
+			method: "POST",
+			url: "http://localhost:7777/getForecast",
+			data: getForecast,
+			dataType: 'text',
+		   error: function(xhr,error){
+		   	alert("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     //alert("success "+ response);
+		     var responseArray = JSON.parse(response);
+		     $('#forecast').empty();
+		     for(i=0;i<responseArray.length;i++){
+		     	var s="dia:"+responseArray[i].day+", cielo:"+responseArray[i].sky.estadocielo+", Temperatura:"+responseArray[i].temperature.temperatura+" "+responseArray[i].temperature.escala+"<br>";
+		     	$('#forecast').append(s);
+		     }
+		     
+		   }
+		 });		
+	});	
+	
+</script>

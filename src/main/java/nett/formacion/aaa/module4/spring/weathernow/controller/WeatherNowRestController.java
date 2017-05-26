@@ -244,7 +244,11 @@ public class WeatherNowRestController {
 				System.out.println(estado.getEstado());
 				
 				//Buscamos un registro para la fecha y ciudad pasadas como parámetro
-				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");				
+				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+				if(fecha==null){
+					Date hoy=Calendar.getInstance().getTime();
+					fecha = formatoFecha.format(hoy);
+				}		
 				registro = wnRepo.findByFechaRegAndCiudade(formatoFecha.parse(fecha), city);
 				if(registro!= null){
 					//Si ya existe dicho registro, lo actualizamos
@@ -317,87 +321,99 @@ public class WeatherNowRestController {
 
 		System.out.println("Dentro del método addTemperature de WheatherNowController");
 		// Inicializamos una respuesta
-		String response = null;
-		// Nos aseguramos que la escala solicitada está dentro de nuestro ENUM
-		if (Escala.contains(escala)) {
+				String response = null;
+				// Nos aseguramos que la escala solicitada está dentro de nuestro ENUM
+				if (Escala.contains(escala)) {
 
-			// Instanciamos una ciudad ( vacía por ahora )
-			Ciudad city = new Ciudad();
-			// Instanciamos un usuario ( vacío por ahora )
-			Usuario usuario = new Usuario();
-			// Instanciamos un registro ( vacío por ahora )
-			Registro registro = new Registro();
-			// Instaciamos un estadosCielo ( vacío por ahora, pero incluirá un valor por defecto )  Finalmente no
-			// Estadoscielo estado = new Estadoscielo();
-			// Objeto que convertirá nuestros objetos en cadenas de texto JSON
-			// para
-			// devolverlas
-			ObjectMapper mapper = new ObjectMapper();
-			// Instaciamos un GetTemperature
-			GetTemperature getTemperature = new GetTemperature();
+					// Instanciamos una ciudad ( vacía por ahora )
+					Ciudad city = new Ciudad();
+					// Instanciamos un usuario ( vacío por ahora )
+					Usuario usuario = new Usuario();
+					// Instanciamos un registro ( vacío por ahora )
+					Registro registro = new Registro();
+					/* if(idUsuario == null){ */
+					Integer idUsuario = 1;
+					// }
+					// Objeto que convertirá nuestros objetos en cadenas de texto JSON
+					// para
+					// devolverlas
+					ObjectMapper mapper = new ObjectMapper();
+					// Instaciamos un GetTemperature
+					GetTemperature getTemperature = new GetTemperature();
 
-			// Bloque try-catch en el que realizaremos todas las tareas de
-			// consulta
-			// a la BBDD
-			try {
-				// Cargamos la ciudad cuyo nombre coinincida con el parámetro
-				// consultando, la BBDD a través del repositorio de Ciudades
-				city = wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
-				// Si encuentra la ciudad
-				if (city != null) {
-					System.out.println(city.getNombreCiu());
-					// Cargamos la temperatura cuyo id coinincida con el
-					// parámetro, consultando la BBDD a través del repositorio de
-					// Registros
-					SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");				
-					registro = wnRepo.findByFechaRegAndCiudade(formatoFecha.parse(fecha), city);
+					// Bloque try-catch en el que realizaremos todas las tareas de
+					// consulta
+					// a la BBDD
+					try {
+						// Cargamos la ciudad cuyo nombre coinincida con el parámetro
+						// consultando, la BBDD a través del repositorio de Ciudades
+						city = wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
+						// Si encuentra la ciudad
+						if (city != null) {
+							System.out.println(city.getNombreCiu());
+							//Transformamos la escala si es distinta a C
+							if(escala.toUpperCase().equals("F")){
+								getTemperature.setTemperatura(fahrenheitToCelsius(temperatura));
+							}else if(escala.toUpperCase().equals("K")){
+								getTemperature.setTemperatura(temperatura-273);
+							}else{
+								getTemperature.setTemperatura(temperatura);
+							}
+							// Cargamos la temperatura cuyo id coinincida con el
+							// parámetro, consultando la BBDD a través del repositorio de
+							// Registros
+							SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");	
+							if(fecha==null){
+								Date hoy=Calendar.getInstance().getTime();
+								fecha = formatoFecha.format(hoy);
+							}
+										
+							registro = wnRepo.findByFechaRegAndCiudade(formatoFecha.parse(fecha), city);
+							usuario = wnUsuarioRepo.findOne(idUsuario);
 
-					//Buscamos un registro para la fecha y ciudad pasadas como parámetro
-					if(registro!= null){
-						//Si ya existe dicho registro, lo actualizamos
-						registro.setTemperatura(temperatura);
-					}else{			
-					
-						// si no existe, lo rellenamos y guardamos
-						// Vamos cargando los objetos consultados a la base de datos en
-						// el objeto -- registro --
-						registro = new Registro();
-						registro.setCiudade(city);
-						registro.setTemperatura(temperatura);
-						//Objeto que formateará el String fecha a una fecha
-						System.out.println(fecha);
-						
-						System.out.println(formatoFecha.parse(fecha).toString());
-						registro.setFechaReg(formatoFecha.parse(fecha));
-						/* if(idUsuario == null){ */
-						Integer idUsuario = 1;
-						// }
-						usuario = wnUsuarioRepo.findOne(idUsuario);
-						registro.setUsuario(usuario);
+							//Buscamos un registro para la fecha y ciudad pasadas como parámetro
+							if(registro!= null){
+								//Si ya existe dicho registro, lo actualizamos
+								registro.setTemperatura(getTemperature.getTemperatura());
+								registro.setUsuario(usuario);
+							}else{			
+							
+								// si no existe, lo rellenamos y guardamos
+								// Vamos cargando los objetos consultados a la base de datos en
+								// el objeto -- registro --
+								registro = new Registro();
+								registro.setCiudade(city);
+								registro.setTemperatura(getTemperature.getTemperatura());
+								//Objeto que formateará el String fecha a una fecha
+								System.out.println(fecha);
+								
+								System.out.println(formatoFecha.parse(fecha).toString());
+								registro.setFechaReg(formatoFecha.parse(fecha));
+								registro.setUsuario(usuario);
+							}
+							// Guardamos el registro
+							wnRepo.save(registro);
+							// Devolvemos el registro
+							// response = mapper.writeValueAsString(registro);
+
+							// Devolvemos un pojo de tipo GetTemperature
+							getTemperature.setEscala(Escala.valueOf(escala.toUpperCase()));
+							response = mapper.writeValueAsString(getTemperature);
+							// Si no encuentra la ciudad no guarda.
+						} else {
+							response = "Esta ciudad no existe en nuestra base de datos.";
+						}
+
+
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage());
+						response = e.getMessage();
 					}
-					// Guardamos el registro
-					wnRepo.save(registro);
-					// Devolvemos el registro
-					// response = mapper.writeValueAsString(registro);
-
-					// Devolvemos un pojo de tipo GetTemperature
-					getTemperature.setTemperatura(registro.getTemperatura());
-					response = mapper.writeValueAsString(getTemperature);
-					// Si no encuentra la ciudad no guarda.
 				} else {
-					response = "Esta ciudad no existe en nuestra base de datos.";
+					response = "Wrong temperature Scale";
 				}
 
-
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage());
-				response = e.getMessage();
-			}
-		} else {
-			response = "Wrong temperature Scale";
-		}
-
-		return response;
+				return response;
 	}
 
 	/**

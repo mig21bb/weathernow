@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>getSky</title>
+</head>
+<body>
+	<form id="getSkyForm" action="http://localhost:7777/getSky" method="GET">
+		<label for="ciudad">
+			Ciudad
+			<select name="ciudad" id="ciudades">
+				
+			</select>
+		</label>
+	</form>
+	<button id="getSky" type="button">GetSky</button>
+	<div id="sky">
+		
+	</div>
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$.ajax({
+			method: "GET",
+			url: "http://localhost:7777/ciudads",
+			dataType: 'text',		
+			error: function(xhr,error){
+		   	console.log("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     console.log("success "+ response);
+		     var responseObject = JSON.parse(response);
+		     var cities = responseObject._embedded.ciudads;
+		     console.log(cities);
+		     for(i=0;i<cities.length;i++){
+		     	$('#ciudades').append('<option value="'+cities[i].nombreCiu+'">'+cities[i].nombreCiu+'</option>');
+		     }
+		   }	
+	});
+		
+		$.ajax({
+			method: "GET",
+			url: "http://localhost:7777/estadoscieloes",
+			dataType: 'text',		
+			error: function(xhr,error){
+		   	console.log("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     console.log("success "+ response);
+		     var responseObject = JSON.parse(response);
+		     var estados = responseObject._embedded.estadoscieloes;
+		     console.log(estados);
+		     for(i=0;i<estados.length;i++){
+		     	$('#estados').append('<option value="'+(i+1)+'">'+estados[i].estado+'</option>');
+		     }
+		   }	
+	});
+	});
+	$('#getSky').click(function(){
+		var getSky = $('#getSkyForm').serialize();
+		$.ajax({
+			method: "POST",
+			url: "http://localhost:7777/getSky",
+			data: getSky,
+			dataType: 'text',
+		   error: function(xhr,error){
+		   	alert("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     alert("success "+ response);
+		   }
+		 });		
+	});		
+	
+</script>

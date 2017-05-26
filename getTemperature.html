@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>getTemperature</title>
+</head>
+<body>
+	<form id="getTemperatureForm" action="http://localhost:7777/getTemperature" method="GET">
+		<label for="ciudad">
+			Ciudad
+			<select name="ciudad" id="ciudades">
+				
+			</select>
+		</label>
+		<label for="temperature">
+			Escala
+			<select name="escala" id="escala">
+				<option value="K">Kelvin</option>
+				<option value="C">Celsius</option>
+				<option value="F">Fahrenheit</option>
+			</select>
+		</label>
+	</form>
+	<button id="getTemperature" type="button">GetTemperature</button>
+	<div id="temperature">
+		
+	</div>
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$.ajax({
+			method: "GET",
+			url: "http://localhost:7777/ciudads",
+			dataType: 'text',		
+			error: function(xhr,error){
+		   	console.log("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     console.log("success "+ response);
+		     var responseObject = JSON.parse(response);
+		     var cities = responseObject._embedded.ciudads;
+		     console.log(cities);
+		     for(i=0;i<cities.length;i++){
+		     	$('#ciudades').append('<option value="'+cities[i].nombreCiu+'">'+cities[i].nombreCiu+'</option>');
+		     }
+		   }	
+		});
+			
+	});
+	$('#getTemperature').click(function(){
+		var getTemperature = $('#getTemperatureForm').serialize();
+		$.ajax({
+			method: "POST",
+			url: "http://localhost:7777/getTemperature",
+			data: getTemperature,
+			dataType: 'text',
+		   error: function(xhr,error){
+		   	alert("error on ajax call: "+xhr);
+		   },
+		   success: function(response){
+		     alert("success "+ response);
+		   }
+		 });		
+	});		
+	
+</script>

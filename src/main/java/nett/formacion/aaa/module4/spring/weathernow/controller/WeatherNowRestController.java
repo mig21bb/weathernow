@@ -78,14 +78,33 @@ public class WeatherNowRestController {
 			@RequestParam(value = "ciudad", required = true) String ciudad
 			) {	
 		
+		//Instancio la ciudad
+		Ciudad city=new Ciudad();
+		//Instancio el calendario
+		Calendar hoy=Calendar.getInstance();
 		
+		//Instancio un nuevo registro
+		Registro registro=new Registro();
 		GetSky getSky = new GetSky();
 		String response = null;
 		
 		try{
-			//Hay que emlear los repositories para rellenar las propiedades del objeto getTemperature
+			city=wnCityRepo.findByNombreCiuIgnoreCase(ciudad);
 			
-			//Código aquí
+			//Si encuentra la ciudad
+			if(city!=null){
+				registro=wnRepo.findByFechaRegAndCiudade(hoy.getTime(),city);
+				
+				if(registro!=null){
+					getSky.setEstadocielo(registro.getEstadoscielo().getEstado());
+				}
+				
+				
+			}else{
+				//Si no encuentra la ciudad, muestro un mensaje
+				response="Esta ciudad no existe en nuestra base de datos.";
+			}			
+			
 			
 			
 			response = mapper.writeValueAsString(getSky);
